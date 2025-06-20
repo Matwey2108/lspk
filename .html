@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Доска объявлений | ГАПОУ КК ЛСПК</title>
+    <style>
+        /* Общие стили */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --text-color: #333;
+            --text-light: #7f8c8d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        /* Шапка */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .logo h1 {
+            font-size: 1.4rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .logo p {
+            font-size: 0.9rem;
+            color: var(--light-color);
+            opacity: 0.8;
+        }
+
+        nav {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        nav a {
+            font-size: 0.95rem;
+            padding: 0.3rem 0;
+            position: relative;
+        }
+
+        nav a:hover {
+            opacity: 0.9;
+        }
+
+        nav a.active {
+            font-weight: bold;
+        }
+
+        nav a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: white;
+        }
+
+        .admin-link {
+            color: var(--warning-color);
+        }
+
+        .logout-link {
+            color: var(--accent-color);
+        }
+
+        /* Основное содержимое */
+        main {
+            padding: 2rem 0;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+
+        /* Список объявлений */
+        .announcements-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.2rem;
+            margin-top: 1.5rem;
+        }
+
+        .announcement {
+            background: white;
+            border-radius: 6px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .announcement:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .announcement.important {
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .announcement.new {
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .announcement-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .announcement-header h3 {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            flex-grow: 1;
+        }
+
+        .announcement-header h3 a:hover {
+            color: var(--secondary-color);
+        }
+
+        .category {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .date {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .announcement-content p {
+            margin-bottom: 0.8rem;
+            line-height: 1.5;
+        }
+
+        .announcement-footer {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .author {
+            font-weight: 500;
+        }
+
+        /* Категории */
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .category-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            background-color: var(--light-color);
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .category-btn:hover {
+            background-color: #d6dbdf;
+        }
+
+        .category-btn.active {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        /* Форма добавления */
+        .add-announcement {
+            background: white;
+            border-radius: 6px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-group input {
+            width: auto;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .submit-btn {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .submit-btn:hover {
+            background-color: #219653;
+        }
+
+        .cancel-btn {
+            background-color: var(--light-color);
+        }
+
+        .cancel-btn:hover {
+            background-color: #d6dbdf;
+        }
+
+        .form-note {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 1rem;
+        }
+
+        /* Просмотр объявления */
+        .view-announcement {
+            background: white;
+            border-radius: 6px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .announcement-full {
+            margin-bottom: 2rem;
+        }
+
+        .announcement-full h2 {
+            margin: 1rem 0;
+            color: var(--primary-color);
+            border: none;
+            padding: 0;
+        }
+
+        .announcement-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .announcement-content {
+            line-height: 1.7;
+        }
+
+        .announcement-content p {
+            margin-bottom: 1rem;
+        }
+
+        .announcement-content ul {
+            margin: 1rem 0 1rem 2rem;
+        }
+
+        .announcement-footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        .announcement-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .print-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .print-btn:hover {
+            background-color: #1a252f;
+        }
+
+        .report-btn {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .report-btn:hover {
+            background-color: #c0392b;
+        }
+
+        /* Админ-панель */
+        .admin-tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-btn {
+            padding: 0.7rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+
+        .tab-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--secondary-color);
+        }
+
+        .search-filter {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-filter input,
+        .search-filter select {
+            padding: 0.7rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        .admin-announcements {
+            margin-bottom: 2rem;
+        }
+
+        .announcement-item {
+            background: white;
+            border-radius: 6px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .announcement-item.new {
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .announcement-preview h3 {
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .announcement-preview p {
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .announcement-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .announcement-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-width: 180px;
+        }
+
+        .approve-btn {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .approve-btn:hover {
+            background-color: #219653;
+        }
+
+        .edit-btn {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .reject-btn, .unpublish-btn {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .reject-btn:hover, .unpublish-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .archive-btn {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .archive-btn:hover {
+            background-color: #e67e22;
+        }
+
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 6px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .stat-card h3 {
+            font-size: 1rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Подвал */
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 0 1rem;
+            margin-top: 2rem;
+        }
+
+        .footer-info {
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-info p {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .footer-copy {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 1rem;
+            text-align: center;
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .search-filter {
+                grid-template-columns: 1fr;
+            }
+            
+            .announcement-item {
+                grid-template-columns: 1fr;
+            }
+            
+            .announcement-actions {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .categories {
+                gap: 0.3rem;
+            }
+            
+            .category-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Скрытие/показ разделов */
+        .page-section {
+            display: none;
+        }
+        
+        .page-section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>ГАПОУ КК "Ленинградский социально-педагогический колледж"</h1>
+                <p>Официальная доска объявлений</p>
+            </div>
+            <nav>
+                <a href="#" class="nav-link" data-page="home">Главная</a>
+                <a href="#" class="nav-link" data-page="add">Добавить объявление</a>
+                <a href="#" class="nav-link admin-link" data-page="admin">Админ-панель</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Главная страница -->
+        <section id="home-page" class="page-section active">
+            <h2>Последние объявления</h2>
+            
+            <div class="categories">
+                <button class="category-btn active">Все</button>
+                <button class="category-btn">Учебные</button>
+                <button class="category-btn">Мероприятия</button>
+                <button class="category-btn">Важные</button>
+                <button class="category-btn">Для студентов</button>
+                <button class="category-btn">Для преподавателей</button>
+            </div>
+            
+            <div class="announcements-list">
+                <article class="announcement important">
+                    <div class="announcement-header">
+                        <h3><a href="#" class="view-announcement-link" data-id="1">Изменение расписания на 15 октября</a></h3>
+                        <span class="category">Учебные</span>
+                        <span class="date">12.10.2025</span>
+                    </div>
+                    <div class="announcement-content">
+                        <p>В связи с проведением педагогического совета изменено расписание занятий на 15 октября. Все пары сдвигаются на 1 час позже...</p>
+                    </div>
+                    <div class="announcement-footer">
+                        <span class="author">Учебная часть</span>
+                    </div>
+                </article>
+                
+                <article class="announcement">
+                    <div class="announcement-header">
+                        <h3><a href="#" class="view-announcement-link" data-id="2">Собрание студенческого совета</a></h3>
+                        <span class="category">Мероприятия</span>
+                        <span class="date">10.10.2025</span>
+                    </div>
+                    <div class="announcement-content">
+                        <p>17 октября в 15:00 в актовом зале состоится общее собрание студенческого совета. Приглашаются представители всех групп...</p>
+                    </div>
+                    <div class="announcement-footer">
+                        <span class="author">Студенческий совет</span>
+                    </div>
+                </article>
+                
+                <article class="announcement">
+                    <div class="announcement-header">
+                        <h3><a href="#" class="view-announcement-link" data-id="3">Конкурс "Педагог будущего"</a></h3>
+                        <span class="category">Мероприятия</span>
+                        <span class="date">08.10.2025</span>
+                    </div>
+                    <div class="announcement-content">
+                        <p>Объявляется конкурс профессионального мастерства среди студентов 3-4 курсов. Заявки принимаются до 20 октября...</p>
+                    </div>
+                    <div class="announcement-footer">
+                        <span class="author">Методический отдел</span>
+                    </div>
+                </article>
+                
+                <article class="announcement new">
+                    <div class="announcement-header">
+                        <h3><a href="#" class="view-announcement-link" data-id="4">Технические работы в библиотеке</a></h3>
+                        <span class="category">Важные</span>
+                        <span class="date">05.10.2025</span>
+                    </div>
+                    <div class="announcement-content">
+                        <p>14 октября библиотека будет закрыта на технические работы. Возврат и выдача книг временно приостановлены...</p>
+                    </div>
+                    <div class="announcement-footer">
+                        <span class="author">Библиотека</span>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Форма добавления объявления -->
+        <section id="add-page" class="page-section">
+            <h2>Добавить новое объявление</h2>
+            
+            <form id="announcement-form">
+                <div class="form-group">
+                    <label for="title">Заголовок объявления*</label>
+                    <input type="text" id="title" name="title" required placeholder="Введите заголовок">
+                </div>
+                
+                <div class="form-group">
+                    <label for="category">Категория*</label>
+                    <select id="category" name="category" required>
+                        <option value="">Выберите категорию</option>
+                        <option value="Учебные">Учебные</option>
+                        <option value="Мероприятия">Мероприятия</option>
+                        <option value="Важные">Важные</option>
+                        <option value="Для студентов">Для студентов</option>
+                        <option value="Для преподавателей">Для преподавателей</option>
+                        <option value="Разное">Разное</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="content">Текст объявления*</label>
+                    <textarea id="content" name="content" required placeholder="Введите текст объявления"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="author">Ваше имя/должность*</label>
+                    <input type="text" id="author" name="author" required placeholder="Например: Учебная часть">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Ваш email (для обратной связи)</label>
+                    <input type="email" id="email" name="email" placeholder="email@example.com">
+                </div>
+                
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="important" name="important">
+                    <label for="important">Важное объявление (будет выделено)</label>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn submit-btn">Опубликовать</button>
+                    <button type="reset" class="btn cancel-btn">Очистить</button>
+                </div>
+                
+                <p class="form-note">* Обязательные для заполнения поля</p>
+            </form>
+        </section>
+
+        <!-- Просмотр объявления -->
+        <section id="view-page" class="page-section">
+            <a href="#" class="back-link" data-page="home">← Вернуться к списку объявлений</a>
+            
+            <article class="announcement-full important">
+                <div class="announcement-meta">
+                    <span class="category">Учебные</span>
+                    <span class="date">12.10.2025</span>
+                </div>
+                
+                <h2>Изменение расписания на 15 октября</h2>
+                
+                <div class="announcement-content">
+                    <p>В связи с проведением педагогического совета изменено расписание занятий на 15 октября.</p>
+                    
+                    <p><strong>Изменения:</strong></p>
+                    <ul>
+                        <li>Все пары сдвигаются на 1 час позже</li>
+                        <li>Первая пара начинается в 9:30</li>
+                        <li>Последняя пара заканчивается в 16:00</li>
+                    </ul>
+                    
+                    <p>Обновленное расписание можно посмотреть на информационном стенде или у старост групп.</p>
+                    
+                    <p><strong>Важно!</strong> Студентам, у которых по новому расписанию появляются "окна", рекомендуется находиться в библиотеке или читальном зале.</p>
+                </div>
+                
+                <div class="announcement-footer">
+                    <span class="author">Учебная часть</span>
+                    <span class="contacts">Каб. 215, тел. 7-10-45 (вн. 121)</span>
+                </div>
+            </article>
+            
+            <div class="announcement-actions">
+                <button class="btn print-btn" onclick="window.print()">Распечатать</button>
+                <button class="btn report-btn">Сообщить о проблеме</button>
+            </div>
+        </section>
+
+        <!-- Админ-панель -->
+        <section id="admin-page" class="page-section">
+            <h2>Управление объявлениями</h2>
+            
+            <div class="admin-tabs">
+                <button class="tab-btn active" data-tab="moderation">На модерации (3)</button>
+                <button class="tab-btn" data-tab="published">Опубликованные (24)</button>
+                <button class="tab-btn" data-tab="archived">Архив (56)</button>
+            </div>
+            
+            <div class="search-filter">
+                <input type="text" placeholder="Поиск по объявлениям...">
+                <select>
+                    <option>Все категории</option>
+                    <option>Учебные</option>
+                    <option>Мероприятия</option>
+                    <option>Важные</option>
+                    <option>Для студентов</option>
+                    <option>Для преподавателей</option>
+                </select>
+                <select>
+                    <option>Сортировка по дате (новые)</option>
+                    <option>Сортировка по дате (старые)</option>
+                    <option>Сортировка по заголовку</option>
+                </select>
+            </div>
+            
+            <div class="admin-announcements">
+                <div class="announcement-item new">
+                    <div class="announcement-preview">
+                        <h3>Замена преподавателя по математике</h3>
+                        <p>С 20 октября занятия по математике будет вести Иванова И.И. вместо Петровой П.П.</p>
+                        <div class="announcement-meta">
+                            <span class="category">Учебные</span>
+                            <span class="author">Завуч</span>
+                            <span class="date">10.10.2025</span>
+                        </div>
+                    </div>
+                    <div class="announcement-actions">
+                        <button class="btn approve-btn">Одобрить</button>
+                        <button class="btn edit-btn">Редактировать</button>
+                        <button class="btn reject-btn">Отклонить</button>
+                    </div>
+                </div>
+                
+                <div class="announcement-item new">
+                    <div class="announcement-preview">
+                        <h3>Сбор макулатуры</h3>
+                        <p>Объявляется конкурс по сбору макулатуры среди учебных групп. Макулатуру сдавать в каб. 105 с 9:00 до 15:00.</p>
+                        <div class="announcement-meta">
+                            <span class="category">Мероприятия</span>
+                            <span class="author">Экологический клуб</span>
+                            <span class="date">09.10.2025</span>
+                        </div>
+                    </div>
+                    <div class="announcement-actions">
+                        <button class="btn approve-btn">Одобрить</button>
+                        <button class="btn edit-btn">Редактировать</button>
+                        <button class="btn reject-btn">Отклонить</button>
+                    </div>
+                </div>
+                
+                <div class="announcement-item">
+                    <div class="announcement-preview">
+                        <h3>Технические работы в корпусе Б</h3>
+                        <p>15 октября с 8:00 до 14:00 в корпусе Б будут проводиться технические работы. Вход в корпус будет ограничен.</p>
+                        <div class="announcement-meta">
+                            <span class="category">Важные</span>
+                            <span class="author">Администрация</span>
+                            <span class="date">08.10.2025</span>
+                        </div>
+                    </div>
+                    <div class="announcement-actions">
+                        <button class="btn unpublish-btn">Снять с публикации</button>
+                        <button class="btn edit-btn">Редактировать</button>
+                        <button class="btn archive-btn">В архив</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <h3>Всего объявлений</h3>
+                    <p>83</p>
+                </div>
+                <div class="stat-card">
+                    <h3>На модерации</h3>
+                    <p>3</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Опубликовано</h3>
+                    <p>24</p>
+                </div>
+                <div class="stat-card">
+                    <h3>В архиве</h3>
+                    <p>56</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-info">
+                <p>ГАПОУ КК "Ленинградский социально-педагогический колледж"</p>
+                <p>Адрес: Краснодарский край, ст-ца Ленинградская, ул. Красная, 152</p>
+                <p>Телефон: +7 (86145) 7-10-45</p>
+            </div>
+            <div class="footer-copy">
+                <p>&copy; 2025 Все права защищены</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Переключение между страницами
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const pageId = this.getAttribute('data-page');
+                
+                // Скрыть все страницы
+                document.querySelectorAll('.page-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Показать выбранную страницу
+                document.getElementById(`${pageId}-page`).classList.add('active');
+                
+                // Обновить активную ссылку в навигации
+                document.querySelectorAll('.nav-link').forEach(navLink => {
+                    navLink.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+
+        // Просмотр объявления
+        document.querySelectorAll('.view-announcement-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const announcementId = this.getAttribute('data-id');
+                
+                // Здесь можно загрузить данные объявления по ID
+                // В этом примере просто переключаем на страницу просмотра
+                document.querySelectorAll('.page-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById('view-page').classList.add('active');
+                
+                // Обновить навигацию
+                document.querySelectorAll('.nav-link').forEach(navLink => {
+                    navLink.classList.remove('active');
+                });
+            });
+        });
+
+        // Обработка формы добавления объявления
+        document.getElementById('announcement-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Объявление успешно отправлено на модерацию! После проверки оно будет опубликовано.');
+            this.reset();
+            
+            // Вернуться на главную страницу
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById('home-page').classList.add('active');
+            
+            // Обновить навигацию
+            document.querySelectorAll('.nav-link').forEach(navLink => {
+                navLink.classList.remove('active');
+            });
+            document.querySelector('.nav-link[data-page="home"]').classList.add('active');
+        });
+
+        // Переключение вкладок в админ-панели
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Кнопка "Назад" на странице просмотра
+        document.querySelector('.back-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            const page = this.getAttribute('data-page');
+            
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(`${page}-page`).classList.add('active');
+            
+            document.querySelectorAll('.nav-link').forEach(navLink => {
+                navLink.classList.remove('active');
+            });
+            document.querySelector(`.nav-link[data-page="${page}"]`).classList.add('active');
+        });
+
+        // Действия в админ-панели
+        document.querySelectorAll('.approve-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const announcement = this.closest('.announcement-item');
+                announcement.classList.remove('new');
+                alert('Объявление одобрено и опубликовано!');
+            });
+        });
+
+        document.querySelectorAll('.reject-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (confirm('Вы уверены, что хотите отклонить это объявление?')) {
+                    const announcement = this.closest('.announcement-item');
+                    announcement.remove();
+                    alert('Объявление отклонено и удалено!');
+                }
+            });
+        });
+
+        document.querySelectorAll('.unpublish-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (confirm('Снять объявление с публикации?')) {
+                    const announcement = this.closest('.announcement-item');
+                    announcement.classList.add('new');
+                    alert('Объявление снято с публикации и отправлено на модерацию!');
+                }
+            });
+        });
+
+        document.querySelectorAll('.archive-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (confirm('Переместить объявление в архив?')) {
+                    const announcement = this.closest('.announcement-item');
+                    announcement.remove();
+                    alert('Объявление перемещено в архив!');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
